@@ -1,4 +1,4 @@
-package com.blackwall.rest.webservices.restfulwebservices;
+package com.blackwall.rest.webservices.restfulwebservices.helloworld;
 
 public class HelloWorldBean {
 
