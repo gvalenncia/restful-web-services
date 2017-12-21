@@ -1,4 +1,4 @@
-package com.blackwall.rest.webservices.restfulwebservices.user;
+package com.blackwall.rest.webservices.restfulwebservices.exeption;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
