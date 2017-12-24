@@ -1,4 +1,4 @@
-package com.blackwall.rest.webservices.restfulwebservices;
+package com.training.rws;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,12 +1,12 @@
-package com.blackwall.rest.webservices.restfulwebservices;
+package com.training.rws;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class RestfulWebServicesApplication {
+public class AppConfig {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RestfulWebServicesApplication.class, args);
+		SpringApplication.run(AppConfig.class, args);
 	}
 }

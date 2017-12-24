@@ -1,10 +1,10 @@
-package com.blackwall.rest.webservices.restfulwebservices.helloworld;
+package com.training.rws.dto;
 
-public class HelloWorldBean {
+public class HelloWorldDTO {
 
     private String message;
 
-    public HelloWorldBean(String message) {
+    public HelloWorldDTO(String message) {
         this.message = message;
     }
 

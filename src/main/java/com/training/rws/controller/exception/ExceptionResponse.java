@@ -1,4 +1,4 @@
-package com.blackwall.rest.webservices.restfulwebservices.exeption;
+package com.training.rws.controller.exception;
 
 import java.util.Date;
 
@@ -13,7 +13,6 @@ public class ExceptionResponse {
         this.setMessage(message);
         this.setDetails(details);
     }
-
 
     public Date getTimestamp() {
         return timestamp;
