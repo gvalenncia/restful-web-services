@@ -8,6 +8,8 @@ import com.training.rws.dto.PostDTO;
 import com.training.rws.dto.UserDTO;
 import com.training.rws.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 public class UserController {
@@ -36,12 +40,18 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public UserDTO retrieveUser(@PathVariable int id){
+    public Resource<UserDTO> retrieveUser(@PathVariable int id){
         UserDTO userDTO = userDAO.findOne(id);
         if(userDTO == null){
             throw new UserNotFoundException("The user with id: " + id + ", was not found");
         }
-        return userDTO;
+
+        //applying hateoas
+        Resource<UserDTO> resource = new Resource<UserDTO>(userDTO);
+        ControllerLinkBuilder linkTo = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).retrieveAllUsers());
+        resource.add(linkTo.withRel("all-users"));
+
+        return resource;
     }
 
     @PostMapping(path = "/users")
