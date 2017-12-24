@@ -8,10 +8,10 @@ public class UserDTO {
 
     private Integer id;
 
-    @Size(min = 6, message = "'name' field length should be 6 characters at least")
+    @Size(min = 6, message = "The length of the field 'name', should be 6 characters at least")
     private String name;
 
-    @Past(message = "'brthDate' field should be in the past")
+    @Past(message = "The field 'birthDate', should be less than the current date")
     private Date birthDate;
 
     public UserDTO(){}

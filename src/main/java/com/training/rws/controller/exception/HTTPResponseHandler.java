@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import java.util.Date;
+import java.util.Optional;
 
 @ControllerAdvice
 @RestController
@@ -36,7 +37,13 @@ public class HTTPResponseHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "The body is not properly built.", ex.getBindingResult().toString());
+
+        Optional<String> detailsOpt = Optional.ofNullable(ex.getBindingResult().getFieldError().getDefaultMessage());
+
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                "The body is not properly built.",
+                detailsOpt.orElseGet(() -> ex.getBindingResult().getFieldError().toString()));
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
