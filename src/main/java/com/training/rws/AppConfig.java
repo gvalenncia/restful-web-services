@@ -23,10 +23,10 @@ public class AppConfig {
         return localeResolver;
     }
 
-    @Bean
+    @Bean(name="messageSource")
     public ResourceBundleMessageSource bundleMessageSource (){
 	    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-	    messageSource.setBasename("/messages");
+	    messageSource.setBasename("messages");
 	    return messageSource;
     }
 }
