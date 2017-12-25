@@ -1,5 +1,6 @@
 package com.training.rws.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,6 +10,9 @@ import java.util.Date;
 
 @ApiModel(description = "Details about the users")
 public class UserDTO {
+
+    @JsonIgnore
+    private String password;
 
     private Integer id;
 
@@ -22,10 +26,11 @@ public class UserDTO {
 
     public UserDTO(){}
 
-    public UserDTO(Integer id, String name, Date birthDate) {
+    public UserDTO(Integer id, String name, Date birthDate, String password) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
+        this.setPassword(password);
     }
 
 
@@ -51,5 +56,13 @@ public class UserDTO {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

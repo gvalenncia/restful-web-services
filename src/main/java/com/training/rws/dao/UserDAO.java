@@ -15,9 +15,9 @@ public class UserDAO {
     private static int usersCount = 3;
 
     static {
-        userDTOS.add(new UserDTO(1, "german", new Date()));
-        userDTOS.add(new UserDTO(2, "ruth", new Date()));
-        userDTOS.add(new UserDTO(3, "lina", new Date()));
+        userDTOS.add(new UserDTO(1, "german", new Date(), "hiddenText"));
+        userDTOS.add(new UserDTO(2, "ruth", new Date(), "hiddenText"));
+        userDTOS.add(new UserDTO(3, "lina", new Date(), "hiddenText"));
     }
 
     public List<UserDTO> findAll(){
@@ -30,6 +30,7 @@ public class UserDAO {
         } else {
             if(userDTO.getId() == null){
                 userDTO.setId(++usersCount);
+                userDTO.setPassword("1234");
             }
             userDTOS.add(userDTO);
             return userDTO;
