@@ -7,6 +7,7 @@ import com.training.rws.dao.PostDAO;
 import com.training.rws.dto.PostDTO;
 import com.training.rws.dto.UserDTO;
 import com.training.rws.dao.UserDAO;
+import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;

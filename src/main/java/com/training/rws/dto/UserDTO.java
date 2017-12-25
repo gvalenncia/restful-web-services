@@ -1,16 +1,22 @@
 package com.training.rws.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@ApiModel(description = "Details about the users")
 public class UserDTO {
 
     private Integer id;
 
     @Size(min = 6, message = "The length of the field 'name', should be 6 characters at least")
+    @ApiModelProperty(notes = "The length of the field 'name', should be 6 characters at least")
     private String name;
 
+    @ApiModelProperty(notes = "The field 'birthDate', should be less than the current date")
     @Past(message = "The field 'birthDate', should be less than the current date")
     private Date birthDate;
 
