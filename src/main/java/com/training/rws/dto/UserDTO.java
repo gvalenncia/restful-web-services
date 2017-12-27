@@ -1,5 +1,6 @@
 package com.training.rws.dto;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,7 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
+@JsonFilter("UserDTOFilter")
 @ApiModel(description = "Details about the users")
 public class UserDTO {
 
@@ -20,17 +23,22 @@ public class UserDTO {
     @ApiModelProperty(notes = "The length of the field 'name', should be 6 characters at least")
     private String name;
 
+    private String lastName;
+
+    private List<PostDTO> posts;
+
     @ApiModelProperty(notes = "The field 'birthDate', should be less than the current date")
     @Past(message = "The field 'birthDate', should be less than the current date")
     private Date birthDate;
 
     public UserDTO(){}
 
-    public UserDTO(Integer id, String name, Date birthDate, String password) {
+    public UserDTO(Integer id, String name, Date birthDate, String password, List<PostDTO> posts) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
         this.setPassword(password);
+        this.setPosts(posts);
     }
 
 
@@ -64,5 +72,22 @@ public class UserDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<PostDTO> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<PostDTO> posts) {
+        this.posts = posts;
     }
 }

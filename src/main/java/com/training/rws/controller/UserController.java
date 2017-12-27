@@ -1,5 +1,8 @@
 package com.training.rws.controller;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.training.rws.controller.exception.ExceptionResponse;
 import com.training.rws.controller.exception.UserExistsException;
 import com.training.rws.controller.exception.UserNotFoundException;
@@ -13,13 +16,13 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -33,15 +36,18 @@ public class UserController {
     private PostDAO postDAO;
 
     @GetMapping(path = "/users")
-    public ResponseEntity retrieveAllUsers(){
+    public ResponseEntity<MappingJacksonValue> retrieveAllUsers(){
         List<UserDTO> userDTOS = userDAO.findAll();
+
+        MappingJacksonValue mapping = filterFields(userDTOS, new HashSet(Arrays.asList("id","name", "lastName", "birthDate")));
+
         return userDTOS.isEmpty()
                 ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(userDTOS);
+                : ResponseEntity.ok().body(mapping);
     }
 
     @GetMapping(path = "/users/{id}")
-    public Resource<UserDTO> retrieveUser(@PathVariable int id){
+    public ResponseEntity<MappingJacksonValue> retrieveUser(@PathVariable int id){
         UserDTO userDTO = userDAO.findOne(id);
         if(userDTO == null){
             throw new UserNotFoundException("The user with id: " + id + ", was not found");
@@ -52,7 +58,7 @@ public class UserController {
         ControllerLinkBuilder linkTo = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).retrieveAllUsers());
         resource.add(linkTo.withRel("all-users"));
 
-        return resource;
+        return ResponseEntity.ok().body(filterFields(resource, new HashSet()));
     }
 
     @PostMapping(path = "/users")
@@ -83,5 +89,21 @@ public class UserController {
         return postDTOS.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(postDTOS);
+    }
+
+    private static MappingJacksonValue filterFields(Object entity, Set fields){
+        SimpleBeanPropertyFilter filter;
+        if (fields.isEmpty()){
+            filter = SimpleBeanPropertyFilter.serializeAll();
+        } else {
+            filter = SimpleBeanPropertyFilter.filterOutAllExcept(fields);
+        }
+
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserDTOFilter", filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(entity);
+        mapping.setFilters(filters);
+
+        return mapping;
     }
 }

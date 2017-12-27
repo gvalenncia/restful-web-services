@@ -15,9 +15,9 @@ public class UserDAO {
     private static int usersCount = 3;
 
     static {
-        userDTOS.add(new UserDTO(1, "german", new Date(), "hiddenText"));
-        userDTOS.add(new UserDTO(2, "ruth", new Date(), "hiddenText"));
-        userDTOS.add(new UserDTO(3, "lina", new Date(), "hiddenText"));
+        userDTOS.add(new UserDTO(1, "german", new Date(), "hiddenText",  new ArrayList<PostDTO>()));
+        userDTOS.add(new UserDTO(2, "ruth", new Date(), "hiddenText",  new ArrayList<PostDTO>()));
+        userDTOS.add(new UserDTO(3, "lina", new Date(), "hiddenText",  new ArrayList<PostDTO>()));
     }
 
     public List<UserDTO> findAll(){
