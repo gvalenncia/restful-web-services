@@ -1,23 +1,27 @@
 package com.training.rws.dto;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+
+@Entity
 public class PostDTO {
 
+    @Id
+    @GeneratedValue
     private int id;
-    private int userId;
-    private Date date;
-    private String title;
-    private String content;
+    private String description;
 
-    public PostDTO() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private UserDTO userDTO;
 
-    public PostDTO(int id, int userId, Date date, String title, String content) {
+    public PostDTO(){}
+
+    public PostDTO(int id, String description, UserDTO userDTO) {
         this.setId(id);
-        this.setUserId(userId);
-        this.setDate(date);
-        this.setTitle(title);
-        this.setContent(content);
+        this.setDescription(description);
+        this.setUserDTO(userDTO);
     }
 
     public int getId() {
@@ -28,35 +32,27 @@ public class PostDTO {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getDescription() {
+        return description;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Date getDate() {
-        return date;
+    public UserDTO getUserDTO() {
+        return userDTO;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    @Override
+    public String toString() {
+        return "PostDTO{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

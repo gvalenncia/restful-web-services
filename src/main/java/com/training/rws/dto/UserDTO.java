@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -12,11 +16,11 @@ import java.util.List;
 
 @JsonFilter("UserDTOFilter")
 @ApiModel(description = "Details about the users")
+@Entity
 public class UserDTO {
 
-    @JsonIgnore
-    private String password;
-
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @Size(min = 6, message = "The length of the field 'name', should be 6 characters at least")
@@ -25,18 +29,24 @@ public class UserDTO {
 
     private String lastName;
 
-    private List<PostDTO> posts;
-
     @ApiModelProperty(notes = "The field 'birthDate', should be less than the current date")
     @Past(message = "The field 'birthDate', should be less than the current date")
     private Date birthDate;
 
+    @JsonIgnore
+    private String password;
+
+
+    @OneToMany(mappedBy = "userDTO")
+    private List<PostDTO> posts;
+
+
     public UserDTO(){}
 
-    public UserDTO(Integer id, String name, Date birthDate, String password, List<PostDTO> posts) {
-        this.id = id;
-        this.name = name;
-        this.birthDate = birthDate;
+    public UserDTO(String name, String lastName, Date birthDate, String password, List<PostDTO> posts) {
+        this.setName(name);
+        this.setLastName(lastName);
+        this.setBirthDate(birthDate);
         this.setPassword(password);
         this.setPosts(posts);
     }
@@ -58,6 +68,14 @@ public class UserDTO {
         this.name = name;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public Date getBirthDate() {
         return birthDate;
     }
@@ -72,15 +90,6 @@ public class UserDTO {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public List<PostDTO> getPosts() {

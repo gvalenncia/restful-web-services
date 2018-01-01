@@ -3,18 +3,15 @@ package com.training.rws.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.training.rws.controller.exception.ExceptionResponse;
 import com.training.rws.controller.exception.UserExistsException;
 import com.training.rws.controller.exception.UserNotFoundException;
-import com.training.rws.dao.PostDAO;
+import com.training.rws.dao.PostRepository;
+import com.training.rws.dao.UserRepository;
 import com.training.rws.dto.PostDTO;
 import com.training.rws.dto.UserDTO;
-import com.training.rws.dao.UserDAO;
-import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +27,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class UserController {
 
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Autowired
-    private PostDAO postDAO;
+    private PostRepository postRepository;
 
     @GetMapping(path = "/users")
     public ResponseEntity<MappingJacksonValue> retrieveAllUsers(){
-        List<UserDTO> userDTOS = userDAO.findAll();
+        List<UserDTO> userDTOS = userRepository.findAll();
 
         MappingJacksonValue mapping = filterFields(userDTOS, new HashSet(Arrays.asList("id","name", "lastName", "birthDate")));
 
@@ -48,7 +45,7 @@ public class UserController {
 
     @GetMapping(path = "/users/{id}")
     public ResponseEntity<MappingJacksonValue> retrieveUser(@PathVariable int id){
-        UserDTO userDTO = userDAO.findOne(id);
+        UserDTO userDTO = userRepository.findOne(id);
         if(userDTO == null){
             throw new UserNotFoundException("The user with id: " + id + ", was not found");
         }
@@ -63,7 +60,7 @@ public class UserController {
 
     @PostMapping(path = "/users")
     public ResponseEntity createUser(@Valid @RequestBody UserDTO userDTO){
-        UserDTO newUserDTO = userDAO.save(userDTO);
+        UserDTO newUserDTO = userRepository.save(userDTO);
         if (newUserDTO == null){
             throw new UserExistsException("The user with name: " + userDTO.getName() + ", already exists");
         }
@@ -77,18 +74,39 @@ public class UserController {
 
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id){
-        UserDTO userDTO = userDAO.deleteById(id);
-        if(userDTO == null){
-            throw new UserNotFoundException("The user with id: " + id + ", was not found for deleting");
-        }
+        userRepository.delete(id);
     }
 
     @GetMapping(path = "/users/{id}/posts")
     public ResponseEntity<List<PostDTO>> retrieveUserPosts(@PathVariable int id){
-        List<PostDTO> postDTOS = postDAO.findByUserId(id);
-        return postDTOS.isEmpty()
+        UserDTO userDTO = userRepository.findOne(id);
+        if (userDTO == null){
+            throw new UserNotFoundException("id: " + id);
+        }
+
+        return userDTO.getPosts().isEmpty()
                 ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(postDTOS);
+                : ResponseEntity.ok(userDTO.getPosts());
+    }
+
+    @PostMapping(path = "/users/{id}/posts")
+    public ResponseEntity<PostDTO> craetePost(@PathVariable int id,
+                                                    @RequestBody  PostDTO post){
+        UserDTO userDTO = userRepository.findOne(id);
+        if (userDTO == null){
+            throw new UserNotFoundException("id: " + id);
+        }
+
+        post.setUserDTO(userDTO);
+        postRepository.save(post);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(post.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     private static MappingJacksonValue filterFields(Object entity, Set fields){
